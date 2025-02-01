@@ -1,4 +1,4 @@
-@startuml pause
+@startuml pause menu
 Title Pause Menu/Ingredient (Employee)
 
 Actor Employee
@@ -69,35 +69,91 @@ Pause_Menu_UI -> Employee : display menu list data
 Employee -> Pause_Menu_UI : select menu 
 Employee -> Pause_Menu_UI : click save button 
 Pause_Menu_UI -> POS_Controller :  PATCH /employee/pause/menu
+activate POS_Controller
+
+POS_Controller -> POS_Service : pauseService()
+activate POS_Service
+
+POS_Service -> POS_Repository : updateMenu()
+activate POS_Repository
+
+POS_Repository -> POS_Database : find menu by menu id and update variable paused to true in menu repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Pause_Menu_UI : Return success
+deactivate POS_Controller
+
+Pause_Menu_UI -> Employee : display paused menu list data
+deactivate Pause_Menu_UI
+end
+
+
+' pause ingredient
+alt click pause ingredient button
+Employee -> Pause_Ingredient_UI : click pause ingredient button
+Pause_Ingredient_UI -> POS_Controller :  GET /employee/pause/ingredients
+activate POS_Controller
+
+POS_Controller -> POS_Service : pauseService()
+activate POS_Service
+
+POS_Service -> POS_Repository : getAllIngredient()
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of ingredient in ingredient repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return ingredient list data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return ingredient list data
+deactivate POS_Service
+
+POS_Controller -> Pause_Ingredient_UI : Return ingredient list data
+deactivate POS_Controller
+
+Pause_Ingredient_UI -> Employee : display ingredient list data
+
+' select ingredient
+Employee -> Pause_Ingredient_UI : select ingredient 
+Employee -> Pause_Ingredient_UI : click save button 
+Pause_Ingredient_UI -> POS_Controller :  PATCH /employee/pause/ingredients
 
 activate POS_Controller
 
 POS_Controller -> POS_Service : pauseService()
 activate POS_Service
 
-POS_Service -> POS_Repository : getAllMenu()
+POS_Service -> POS_Repository : updateIngredient()
 activate POS_Repository
 
-POS_Repository -> POS_Database : query all of menu in menu repository
+POS_Repository -> POS_Database : find ingredient by ingredient id and update variable paused to true in ingredient repository
 activate POS_Database
 
 POS_Database -> POS_Repository : Response()
 deactivate POS_Database
 
-POS_Repository -> POS_Service : Return menu list data
+POS_Repository -> POS_Service : Return success
 deactivate POS_Repository
 
-POS_Service -> POS_Controller : Return menu list data
+POS_Service -> POS_Controller : Return success
 deactivate POS_Service
 
-POS_Controller -> Pause_Menu_UI : Return menu list data
+POS_Controller -> Pause_Ingredient_UI : Return success
 deactivate POS_Controller
 
-Pause_Menu_UI -> Employee : display menu list data
-deactivate Pause_Menu_UI
-end
-
-' pause ingredient
-alt click cancel order button
-
+Pause_Ingredient_UI -> Employee : display paused ingredient list data
+deactivate Pause_Ingredient_UI
 end
