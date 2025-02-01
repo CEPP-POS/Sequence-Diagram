@@ -1,4 +1,4 @@
-@startuml view queue
+@startuml view queue and order
 Title View Queue and Order (Employee)
 
 Actor Employee
@@ -65,6 +65,7 @@ deactivate POS_Controller
 
 Order_Complete_UI -> Employee : show success popup and return to order list ui
 deactivate Order_Complete_UI
+end
 
 ' cancel order
 alt click cancel order button
@@ -100,3 +101,4 @@ deactivate POS_Controller
 
 Cancel_Order_UI -> Employee : show success popup and return to order list ui
 deactivate Cancel_Order_UI
+end
