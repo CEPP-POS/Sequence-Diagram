@@ -1,0 +1,40 @@
+' @startuml
+Title Cancel Order (Employee)
+Actor Employee
+boundary UI
+control System
+database Database
+
+    Employee ->> UI: Select Cancel Order
+    activate UI
+    UI ->> System: Check Order Status
+    activate System
+    System ->> Database: Retrieve Order Status
+    activate Database
+    Database -->> System: Return Order Status
+    deactivate Database
+    System -->> UI: Return Order Status
+
+alt Order not yet prepared
+    UI -->> Employee: Display Cancel Order Popup
+    Employee ->> UI: Enter Order ID, Customer Tel., Customer Name
+    UI ->> System: Confirm Cancel Order
+    System ->> Database: Update Order Status
+activate Database
+    Database -->> System : Return Order Cancel complete
+deactivate Database
+    System -->> UI : Return Order Cancel complete
+deactivate System
+    UI -->> Employee : Delete that Order 
+deactivate UI
+else Order already prepared
+    System -->> UI : Send Order cannot be canceled
+activate System
+deactivate System
+activate UI
+    UI -->> Employee: Notify that order cannot be canceled
+deactivate UI
+end
+
+deactivate UI
+@enduml

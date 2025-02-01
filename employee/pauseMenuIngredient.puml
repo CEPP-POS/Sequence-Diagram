@@ -1,0 +1,103 @@
+@startuml pause
+Title Pause Menu/Ingredient (Employee)
+
+Actor Employee
+activate Employee
+activate Order_List_UI
+activate Pause_Menu_UI
+activate Pause_Ingredient_UI
+
+Employee -> Order_List_UI : select employee role
+
+Order_List_UI -> POS_Controller :  GET /employee/orders
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of order in order repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return order list data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return order list data
+deactivate POS_Service
+
+POS_Controller -> Order_List_UI : Return order list data
+deactivate POS_Controller
+
+Order_List_UI -> Employee : display order list and queue data 
+deactivate Order_List_UI
+
+' pause menu
+alt click pause menu button
+Employee -> Pause_Menu_UI : click pause menu button
+Pause_Menu_UI -> POS_Controller :  GET /employee/pause/menu
+activate POS_Controller
+
+POS_Controller -> POS_Service : pauseService()
+activate POS_Service
+
+POS_Service -> POS_Repository : getAllMenu()
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of menu in menu repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu list data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu list data
+deactivate POS_Service
+
+POS_Controller -> Pause_Menu_UI : Return menu list data
+deactivate POS_Controller
+
+Pause_Menu_UI -> Employee : display menu list data
+
+' select menu
+Employee -> Pause_Menu_UI : select menu 
+Employee -> Pause_Menu_UI : click save button 
+Pause_Menu_UI -> POS_Controller :  PATCH /employee/pause/menu
+
+activate POS_Controller
+
+POS_Controller -> POS_Service : pauseService()
+activate POS_Service
+
+POS_Service -> POS_Repository : getAllMenu()
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of menu in menu repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu list data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu list data
+deactivate POS_Service
+
+POS_Controller -> Pause_Menu_UI : Return menu list data
+deactivate POS_Controller
+
+Pause_Menu_UI -> Employee : display menu list data
+deactivate Pause_Menu_UI
+end
+
+' pause ingredient
+alt click cancel order button
+
+end

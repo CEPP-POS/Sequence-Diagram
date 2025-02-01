@@ -1,0 +1,64 @@
+@startuml view menu
+Title View Menu (Customer)
+
+Actor Customer
+activate Customer
+activate Menu_List_UI
+
+Customer -> Menu_List_UI : display all of menu
+Menu_List_UI -> POS_Controller :  GET /customer/menus
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of menu in menuRepository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu data
+deactivate POS_Service
+
+POS_Controller -> Menu_List_UI : Return menu data
+deactivate POS_Controller
+
+Menu_List_UI -> Customer : display list of menu
+deactivate Menu_List_UI
+
+' Select each menu
+activate Menu_Detail_UI
+Customer -> Menu_Detail_UI : select menu 
+Menu_Detail_UI -> POS_Controller :  GET /customer/menus/:menu_id
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query menu detail in size,sweetness,add on,menu type Repository by menu id
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu and option data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu and option data
+deactivate POS_Service
+
+POS_Controller -> Menu_Detail_UI : Return menu and option data
+deactivate POS_Controller
+
+Menu_Detail_UI -> Customer : display list of menu and option
+deactivate Menu_Detail_UI

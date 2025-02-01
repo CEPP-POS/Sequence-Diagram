@@ -1,0 +1,42 @@
+@startuml login
+title Add Menu (Owner)
+
+actor Owner
+activate Owner
+activate Create_Menu_UI
+
+Owner -> Create_Menu_UI : fill menu name
+Owner -> Create_Menu_UI : fill description
+Owner -> Create_Menu_UI : fill price
+Owner -> Create_Menu_UI : upload menu image
+Owner -> Create_Menu_UI : click create menu button
+
+Create_Menu_UI -> POS_Controller :  POST /owner/menus
+activate POS_Controller
+
+POS_Controller -> POS_Service : menuService()
+activate POS_Service
+
+POS_Service -> POS_Repository : create()
+activate POS_Repository
+
+POS_Repository -> POS_Database : save new menu
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Create_Menu_UI : Return success
+deactivate POS_Controller
+
+Create_Menu_UI -> Owner : show success popup and return to menu list UI
+deactivate Create_Menu_UI
+
+
+

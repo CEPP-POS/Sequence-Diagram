@@ -1,0 +1,28 @@
+' @startuml
+Title Receive Bill (Order ID, Queue, Order list, Owner Contact) (Customer)
+Actor Customer
+boundary UI
+control System
+database Database
+
+    Customer ->> UI: Place order
+    activate UI
+    UI ->> System: Check payment status (Success?)
+    activate System
+    System ->> Database: Check payment status
+    activate Database
+    Database -->> System: Return status
+    deactivate Database
+    System -->> UI: Generate Order ID and Queue
+    deactivate System
+    UI ->> System: Send Order details (Order ID, Queue, Order List)
+    activate System
+    System ->> Database: Store Order details (Order ID, Queue, Order List)
+activate Database
+    Database -->> System: Return Order ID, Queue, Order List 
+deactivate Database
+    System -->> UI: Return Order ID, Queue, Order List
+deactivate System
+    UI -->> Customer: Print Bill
+    deactivate UI
+@enduml

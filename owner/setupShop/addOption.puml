@@ -1,0 +1,152 @@
+@startuml addCOption
+Title Add Option (Owner)
+actor Owner
+
+actor Owner
+activate Owner
+activate Option_List_UI
+activate Add_Sweetness_UI
+activate Add_Size_UI
+activate Add_Type_UI
+activate Add_Add_On_UI
+Owner -> Option_List_UI : display list of option
+
+alt select sweetness option
+
+    Owner -> Add_Sweetness_UI : select sweetness option 
+    Owner -> Add_Sweetness_UI : fill sweetness level choice
+    Owner -> Add_Sweetness_UI : select a menu that wants to use a sweetness level  
+    Owner -> Add_Sweetness_UI : click save sweetness level button
+
+    Add_Sweetness_UI -> POS_Controller :  POST /owner/options/:type
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : menuService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : createOption(type:sweetness)
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : link menu and sweetness level in sweetnessRepository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Sweetness_UI : Return success
+    deactivate POS_Controller
+
+    Add_Sweetness_UI -> Owner : show success popup and return to option list UI
+    deactivate Add_Sweetness_UI
+
+else select size option
+    Owner -> Add_Size_UI : select size option 
+    Owner -> Add_Size_UI : fill size choice
+    Owner -> Add_Size_UI : fill size price
+    Owner -> Add_Size_UI : select a menu that wants to use a size   
+    Owner -> Add_Size_UI : click save size button
+
+    Add_Size_UI -> POS_Controller :  POST /owner/options/:type
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : menuService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : createOption(type:size)
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : link menu and size in sizeRepository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Size_UI : Return success
+    deactivate POS_Controller
+
+    Add_Size_UI -> Owner : show success popup and return to option list UI
+    deactivate Add_Size_UI
+
+else select menu type option
+    Owner -> Add_Type_UI : select type option 
+    Owner -> Add_Type_UI : fill type choice
+    Owner -> Add_Type_UI : fill type price
+    Owner -> Add_Type_UI : select a menu that wants to use a type   
+    Owner -> Add_Type_UI : click save type button
+
+    Add_Type_UI -> POS_Controller :  POST /owner/options/:type
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : menuService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : createOption(type:menu-type)
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : link menu and type in typeRepository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Type_UI : Return success
+    deactivate POS_Controller
+
+    Add_Type_UI -> Owner : show success popup and return to option list UI
+    deactivate Add_Type_UI
+
+else select add on option
+    Owner -> Add_Add_On_UI : select add on option 
+    Owner -> Add_Add_On_UI : fill add on choice
+    Owner -> Add_Add_On_UI : fill add on price
+    Owner -> Add_Add_On_UI : fill add on ingredient and add volume
+    Owner -> Add_Add_On_UI : select a menu that wants to use a add on   
+    Owner -> Add_Add_On_UI : click save add on button
+
+    Add_Add_On_UI -> POS_Controller :  POST /owner/options/:type
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : menuService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : createOption(type:add-ons)
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : link menu and add on in addOnRepository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Add_On_UI : Return success
+    deactivate POS_Controller
+
+    Add_Add_On_UI -> Owner : show success popup and return to option list UI
+    deactivate Add_Add_On_UI
+end
+
+

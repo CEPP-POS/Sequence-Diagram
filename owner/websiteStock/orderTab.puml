@@ -1,0 +1,131 @@
+@startuml order
+Title Dashboard order (Owner)
+
+Actor Owner
+activate Owner
+activate Dashboard_Order_UI
+activate Dashboard_Cancel_Order_UI
+activate Cancel_Order_Detail_UI
+
+Owner -> Dashboard_Order_UI : select order tab
+Dashboard_Order_UI -> POS_Controller :  GET /owner/stock-orders/:date
+
+POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of order data in orderRepository 
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return order data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return order data
+deactivate POS_Service
+
+POS_Controller -> Dashboard_Order_UI : Return order data
+deactivate POS_Controller
+
+Dashboard_Order_UI -> Owner : display list of order
+deactivate Dashboard_Order_UI
+
+alt click cancel order button 
+    Owner -> Dashboard_Cancel_Order_UI : click cancel order button
+
+    Dashboard_Cancel_Order_UI -> POS_Controller :  GET /owner/stock-cancel-orders
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : query all of order data that have status cancel in orderRepository  
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return cancel order data
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return cancel order data
+    deactivate POS_Service
+
+    POS_Controller -> Dashboard_Cancel_Order_UI : Return cancel order data
+    deactivate POS_Controller
+
+    Dashboard_Cancel_Order_UI -> Owner : display list of cancel order data
+    deactivate Dashboard_Cancel_Order_UI
+
+
+    ' Click cancel oreder row
+    Owner -> Cancel_Order_Detail_UI : click cancel order row
+
+    Cancel_Order_Detail_UI -> POS_Controller :  GET /owner/orders/:order_id
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : query order detail data by order id in orderRepository  
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return order data
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return  order data
+    deactivate POS_Service
+
+    POS_Controller -> Cancel_Order_Detail_UI : Return  order data
+    deactivate POS_Controller
+
+    Cancel_Order_Detail_UI -> Owner : display order detail data
+
+    ' Click edit status
+    Owner -> Cancel_Order_Detail_UI : click edit status button 
+    Owner -> Cancel_Order_Detail_UI : change status data
+    Owner -> Cancel_Order_Detail_UI : click save button 
+
+    Cancel_Order_Detail_UI -> POS_Controller :  PATCH /owner/orders/:order_id
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save new cancel status in orderRepository  
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Cancel_Order_Detail_UI :Return success
+    deactivate POS_Controller
+
+    Cancel_Order_Detail_UI -> Owner : Return success popup and return to cancel order detail ui
+    deactivate Cancel_Order_Detail_UI
+
+end
+
+@enduml

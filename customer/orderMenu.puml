@@ -1,0 +1,187 @@
+@startuml order menu
+Title Order Menu (Customer)
+
+Actor Customer
+activate Customer
+activate Menu_List_UI
+activate Menu_Detail_UI
+activate Cart_UI
+activate payment_method_UI
+
+' list of menu
+Customer -> Menu_List_UI : display all of menu
+Menu_List_UI -> POS_Controller :  GET /customer/menus
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of menu in menuRepository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu data
+deactivate POS_Service
+
+POS_Controller -> Menu_List_UI : Return menu data
+deactivate POS_Controller
+
+Menu_List_UI -> Customer : display list of menu
+deactivate Menu_List_UI
+
+' custom menu to cart
+Customer -> Menu_Detail_UI : select menu 
+Menu_Detail_UI -> POS_Controller :  GET /customer/menus/:menu_id
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query menu detail in size,sweetness,add on,menu type Repository by menu id
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return menu and option data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return menu and option data
+deactivate POS_Service
+
+POS_Controller -> Menu_Detail_UI : Return menu and option data
+deactivate POS_Controller
+
+Menu_Detail_UI -> Customer : display menu and option data
+
+Customer -> Menu_Detail_UI : select menu type
+Customer -> Menu_Detail_UI : select sweetness level
+Customer -> Menu_Detail_UI : select size
+Customer -> Menu_Detail_UI : select add on
+Customer -> Menu_Detail_UI : select quantity
+Customer -> Menu_Detail_UI : click add to cart button
+Menu_Detail_UI -> Menu_Detail_UI : store menu item in redux stage 
+deactivate Menu_Detail_UI
+
+' click cart icon
+Customer -> Cart_UI : click cart button
+Cart_UI -> Cart_UI : call list menu item in redux stage to display
+Customer -> Cart_UI : click payment button
+Customer -> Cart_UI : select payment method
+
+Cart_UI -> POS_Controller :  POST /employee/orders/item
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : save each order item in order item repository 
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Cart_UI : Return success and go to payment method ui
+deactivate POS_Controller
+
+' select payment method
+alt select qr code  
+    Customer -> payment_method_UI : scan qr code
+    Customer -> payment_method_UI : take picture of slip
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ service
+    activate POS_Controller
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save slip picture in payment repository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Cart_UI : Return success and go to queue ui
+    Cart_UI -> Queue_UI : receive success status auto go to queue ui
+    activate Queue_UI
+    Queue_UI -> Customer : display queue and auto close
+    deactivate Queue_UI
+
+    activate Bill_UI
+    POS_Controller -> Bill_UI : Return success and print bill
+    deactivate POS_Controller
+    Bill_UI -> Customer : get bill from machine
+    deactivate Bill_UI
+
+else select cash
+    Customer -> payment_method_UI : click pay with cash
+    payment_method_UI -> payment_method_UI : display total amount and notice user to pay with employee
+
+    Actor Employee
+    activate Employee
+    Customer -> Employee : pay cash
+    activate Pay_With_Cash_UI
+    Employee -> Pay_With_Cash_UI : fill total amount, receive cash, given and approve on display
+    deactivate Employee
+
+    Pay_With_Cash_UI -> POS_Controller : รอใส่ชื่อ service
+    activate POS_Controller
+    deactivate Pay_With_Cash_UI
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ service
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save payment detail in payment repository
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+    
+    POS_Controller -> Cart_UI : Return success and go to queue ui
+    Cart_UI -> Queue_UI : receive success status auto go to queue ui
+    activate Queue_UI
+    Queue_UI -> Customer : display queue and auto close
+    deactivate Queue_UI
+
+    activate Bill_UI
+    POS_Controller -> Bill_UI : Return success and print bill
+    deactivate POS_Controller
+    Bill_UI -> Customer : get bill from machine
+    deactivate Bill_UI
+end

@@ -1,0 +1,38 @@
+@startuml sale summary
+Title Dashboard Sale Summary (Owner)
+
+Actor Owner
+activate Owner
+activate Dashboard_Sale_Summary_UI
+
+Owner -> Dashboard_Sale_Summary_UI : select sale summary tab
+Owner -> Dashboard_Sale_Summary_UI : select month
+Owner -> Dashboard_Sale_Summary_UI : select year
+
+Dashboard_Sale_Summary_UI -> POS_Controller :  POST /owner/stock-sale/:date
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query sale summary and order data by date in database
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return sale summary and order data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return sale summary and order data
+deactivate POS_Service
+
+POS_Controller -> Dashboard_Sale_Summary_UI : Return sale summary and order data
+deactivate POS_Controller
+
+Dashboard_Sale_Summary_UI -> Owner : display sale summary graph and order detail
+deactivate Dashboard_Sale_Summary_UI
+@enduml

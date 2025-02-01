@@ -1,0 +1,145 @@
+@startuml stock
+Title Dashboard Stock (Owner)
+
+Actor Owner
+activate Owner
+activate Dashboard_Stock_UI
+activate Add_Ingredient_Category_UI
+activate Add_Ingredient_UI
+activate Ingredient_UI
+activate Update_Ingredient_UI
+
+Owner -> Dashboard_Stock_UI : select stock tab
+
+alt click add ingredient category
+    Owner -> Add_Ingredient_Category_UI : click add ingredient category
+    Owner -> Add_Ingredient_Category_UI : fill ingredient name
+    Owner -> Add_Ingredient_Category_UI : fill ingredient category
+    Owner -> Add_Ingredient_Category_UI : fill ingredient volume and unit
+    Owner -> Add_Ingredient_Category_UI : fill ingredient net volume and unit
+    Owner -> Add_Ingredient_Category_UI : click save button
+
+    Dashboard_Stock_UI -> POS_Controller :  POST /owner/stock-group
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save new ingredient category in database 
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Ingredient_Category_UI : Return success
+    deactivate POS_Controller
+
+    Add_Ingredient_Category_UI -> Owner : show success popup 
+    deactivate Add_Ingredient_Category_UI
+
+else click add ingredient 
+    Owner -> Add_Ingredient_UI : click add ingredient
+    Owner -> Add_Ingredient_UI : fill ingredient category name
+    Owner -> Add_Ingredient_UI : click save button
+
+    Dashboard_Stock_UI -> POS_Controller :  POST /owner/create-stock-ingredients
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save new ingredient in database 
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Add_Ingredient_UI : Return success
+    deactivate POS_Controller
+
+    Add_Ingredient_UI -> Owner : show success popup and return to stock ui
+    deactivate Add_Ingredient_UI
+
+else click ingredient row
+    Owner -> Ingredient_UI : click ingredient row
+
+    Ingredient_UI -> POS_Controller :  GET /owner/stock-ingredients/:ingredient_id
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : query ingredient in database 
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return ingredient data
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return ingredient data
+    deactivate POS_Service
+
+    POS_Controller -> Ingredient_UI : Return ingredient data
+    deactivate POS_Controller
+
+    Ingredient_UI -> Owner : show ingredient data
+    deactivate Ingredient_UI
+
+else click edit button
+    Owner -> Update_Ingredient_UI : click edit button
+    Owner -> Update_Ingredient_UI : fill expiration date
+    Owner -> Update_Ingredient_UI : fill net volume
+    Owner -> Update_Ingredient_UI : fill remaining quantity
+    Owner -> Update_Ingredient_UI : click save button
+
+    Update_Ingredient_UI -> POS_Controller :  PATCH /owner/update-stock-ingredients/:ingredient_id
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : รอใส่ชื่อ sevice
+    activate POS_Service
+
+    POS_Service -> POS_Repository : รอใส่ชื่อ method
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : save edit ingredient data in database 
+    activate POS_Database
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : Return success
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return success
+    deactivate POS_Service
+
+    POS_Controller -> Update_Ingredient_UI : Return success
+    deactivate POS_Controller
+
+    Update_Ingredient_UI -> Owner : show success status popup and return to ingredient list ui
+    deactivate Update_Ingredient_UI
+end
+@enduml

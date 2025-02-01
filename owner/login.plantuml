@@ -1,0 +1,93 @@
+@startuml login
+title Login (Owner)
+
+actor Owner
+' object LoginPage
+' database Database
+
+' Owner ->> LoginPage : Click Login Button
+' activate LoginPage
+
+' alt If Email or Password not complete
+'     LoginPage ->> LoginPage : Show error message
+' else The email and password have already been entered
+'     LoginPage ->> Database : Check Email and Password
+'     activate Database
+
+'     Database ->> Database : Validate (Email, password)
+
+'     alt If email and password match
+'         Database -->> LoginPage : Return success with Token (OwnerID, BranchID)
+'         ' deactivate Database
+'         LoginPage -->> Owner : Logged (Token stored)
+'     else If email and password not match
+'         Database -->> LoginPage : Return status Login failed
+'         deactivate Database
+'         LoginPage -->> Owner : Notice user that the username or password is invalid
+'     end
+' end
+
+' deactivate LoginPage
+
+
+activate Owner
+activate Login_UI
+Owner -> Login_UI : Fill email and password
+Owner -> Login_UI : Click login button
+
+alt If email and password not match
+    Login_UI -> POS_Controller : POST /login
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : authService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : validateUser()
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : query to validate email and password
+    activate POS_Database
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+    POS_Repository -> POS_Service : return error
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : return error
+    deactivate POS_Service
+
+    POS_Controller -> Login_UI : return error
+    deactivate POS_Controller
+
+    Login_UI -> Owner : show username or password incorrect
+
+else If email and password match
+    Login_UI -> POS_Controller : POST /login
+    activate POS_Controller
+
+    POS_Controller -> POS_Service : authService()
+    activate POS_Service
+
+    POS_Service -> POS_Repository : validateUser()
+    activate POS_Repository
+
+    POS_Repository -> POS_Database : query to validate email and password
+
+    POS_Database -> POS_Repository : Response()
+    deactivate POS_Database
+
+
+    POS_Repository -> POS_Service : Return Token (OwnerID, BranchID)
+    deactivate POS_Repository
+
+    POS_Service -> POS_Controller : Return Token (OwnerID, BranchID)
+    deactivate POS_Service
+
+    POS_Controller -> Login_UI : Return Token (OwnerID, BranchID)
+    deactivate POS_Controller
+
+    Login_UI -> Owner : Logged (Token stored)
+    deactivate Login_UI
+end
+
+@enduml

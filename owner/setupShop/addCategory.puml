@@ -1,0 +1,40 @@
+@startuml addCategory
+Title Add Category (Owner)
+actor Owner
+
+actor Owner
+activate Owner
+activate Add_Category_UI
+
+Owner -> Add_Category_UI : fill category name
+Owner -> Add_Category_UI : select menu to add in category
+Owner -> Add_Category_UI : click save category button
+
+Add_Category_UI -> POS_Controller :  POST /owner/categories
+activate POS_Controller
+
+POS_Controller -> POS_Service : categoryService()
+activate POS_Service
+
+POS_Service -> POS_Repository : linkMenusToCategory()
+activate POS_Repository
+
+POS_Repository -> POS_Database : save category in each menu
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Add_Category_UI : Return success
+deactivate POS_Controller
+
+Add_Category_UI -> Owner : show success popup and return to category list UI
+deactivate Add_Category_UI
+
+

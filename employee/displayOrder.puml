@@ -1,0 +1,102 @@
+@startuml view queue
+Title View Queue and Order (Employee)
+
+Actor Employee
+activate Employee
+activate Order_List_UI
+activate Order_Complete_UI
+activate Cancel_Order_UI
+
+Employee -> Order_List_UI : select employee role
+
+Order_List_UI -> POS_Controller :  GET /employee/orders
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : query all of order in order repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return order list data
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return order list data
+deactivate POS_Service
+
+POS_Controller -> Order_List_UI : Return order list data
+deactivate POS_Controller
+
+Order_List_UI -> Employee : display order list and queue data 
+deactivate Order_List_UI
+
+' complete order
+alt click complete order button
+Employee -> Order_Complete_UI : click complete order button
+Order_Complete_UI -> POS_Controller :  PATCH /employee/orders/:order_id/complete
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : update order status to success in order repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Order_Complete_UI : Return success
+deactivate POS_Controller
+
+Order_Complete_UI -> Employee : show success popup and return to order list ui
+deactivate Order_Complete_UI
+
+' cancel order
+alt click cancel order button
+Employee -> Cancel_Order_UI : click cancel order button
+Employee -> Cancel_Order_UI : fill order id
+Employee -> Cancel_Order_UI : fill customer name
+Employee -> Cancel_Order_UI : fill customer phone number
+Employee -> Cancel_Order_UI : click cancel order button
+
+Cancel_Order_UI -> POS_Controller :  PATCH /employee/orders/:order_id/cancel
+activate POS_Controller
+
+POS_Controller -> POS_Service : รอใส่ชื่อ service
+activate POS_Service
+
+POS_Service -> POS_Repository : รอใส่ชื่อ method
+activate POS_Repository
+
+POS_Repository -> POS_Database : update order status to cancel and save customer information in order repository
+activate POS_Database
+
+POS_Database -> POS_Repository : Response()
+deactivate POS_Database
+
+POS_Repository -> POS_Service : Return success
+deactivate POS_Repository
+
+POS_Service -> POS_Controller : Return success
+deactivate POS_Service
+
+POS_Controller -> Cancel_Order_UI : Return success
+deactivate POS_Controller
+
+Cancel_Order_UI -> Employee : show success popup and return to order list ui
+deactivate Cancel_Order_UI

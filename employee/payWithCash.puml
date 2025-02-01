@@ -1,0 +1,28 @@
+' @startuml
+Title Pay with Cash (Employee)
+Actor Employee
+boundary UI
+control System
+database Database
+
+    Employee ->> UI: Display all Order and Queue
+    activate UI
+    UI ->> System : Customer Choose to play with Cash (From UI Customer)
+    activate System
+    System -->> UI : interupt UI with Open Popup
+    deactivate System
+    UI -->> Employee: Display Pay with Cash Popup
+    deactivate UI
+    Employee ->> UI: Enter Cash that got from Customer
+    activate UI
+    UI ->> System: Send Confirm Order
+    activate System
+    System ->> Database: Store Order data 
+    activate Database
+    Database -->> System : Return all Order and Queue 
+    deactivate Database
+    System -->> UI : Return all Order and Queue 
+deactivate System
+    UI -->> Employee : Display all Order and Queue
+    deactivate UI
+@enduml

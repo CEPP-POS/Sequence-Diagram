@@ -1,0 +1,24 @@
+' @startuml
+Title Check Cart (Customer)
+Actor Customer
+boundary UI
+control System
+database Database
+
+Customer ->> UI : Select Cart
+activate UI
+UI ->> System : get Order List and Total Price
+activate System
+System ->> Database : Retrieve Order List
+activate Database
+Database -->> System : Return Order List
+deactivate Database
+System ->> Database : Retrieve Price
+activate Database
+Database -->> System : Return Price
+deactivate Database
+System -->> UI : Send Order List and Calculate Total Price
+deactivate System
+UI -->> Customer : Display Order List and Total Price
+deactivate UI
+@enduml
